@@ -18,7 +18,7 @@ ArrayList<String> lines = new ArrayList<>();
 
 // load text file into `lines`
 void slurp(String filename) throws Exception {
-    Files.lines(Path.of(filename)).forEach(l -> { lines.add(l); });
+  Files.lines(Path.of(filename)).forEach(l -> { lines.add(l); });
 }
 
 // get the ends of a string and make them a number
@@ -29,16 +29,16 @@ int firstLast(String s) {
 
 // turn a string with digits in it into a single number
 int coordLineToInt(String line) {
-    var n = line.replaceAll("[a-z]", "");
-    return n.isBlank() ? 0 : firstLast(n);
+  var n = line.replaceAll("[a-z]", "");
+  return n.isBlank() ? 0 : firstLast(n);
 }
 
 // turn all number words into digits
 String wordsToDigits(String s) {
-    for (var k : nums.keySet()) {
-      s = s.replaceAll(k, k+nums.get(k)+k);
-    }
-    return s;
+  for (var k : nums.keySet()) {
+    s = s.replaceAll(k, k+nums.get(k)+k);
+  }
+  return s;
 }
 
 int part1() {
@@ -50,7 +50,7 @@ int part2() {
 }
 
 void main(String[] args) throws Exception {
-    slurp(args[0]);
-    System.out.println("part 1: " + part1());
-    System.out.println("part 2: " + part2());
+  slurp(args[0]);
+  System.out.println("part 1: " + part1());
+  System.out.println("part 2: " + part2());
 }
