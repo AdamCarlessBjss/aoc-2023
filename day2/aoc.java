@@ -1,8 +1,9 @@
-// https://adventofcode.com/2022/day/1
+// https://adventofcode.com/2022/day/2
 import java.nio.file.*;
 import java.util.*;
 import java.util.regex.*;
 
+// a set of coloured cubes
 record CubeSet(int red, int green, int blue) {
   boolean greaterThan(CubeSet b) { 
     return red > b.red() || green > b.green() || blue > b.blue(); 
@@ -10,9 +11,14 @@ record CubeSet(int red, int green, int blue) {
   int power() { return red * green * blue; }
 }
 
-record Game(int id, CubeSet max){}
+// a game has an id and a set of cubes
+record Game(int id, CubeSet max){
+  int possible(CubeSet limit) { return max.greaterThan(limit) ? 0 : id; }
+}
 
+// we play a load of games
 ArrayList<Game> games = new ArrayList<>();
+
 
 void main(String[] args) throws Exception {
   slurp(args[0]);
@@ -26,8 +32,8 @@ void slurp(String filename) throws Exception {
 }
 
 int part1() {
-  CubeSet threshold = new CubeSet(12, 13, 14);
-  return games.stream().mapToInt((g) -> g.max().greaterThan(threshold) ? 0 : g.id()).sum();
+  CubeSet limit = new CubeSet(12, 13, 14);
+  return games.stream().mapToInt((g) -> g.possible(limit)).sum();
 }
 
 int part2() {
@@ -36,10 +42,7 @@ int part2() {
 
 // turn input string into a game with known colour maxes
 void parseGame(String game) {
-  games.add(new Game(
-    gameId(game),
-    maxes(game)
-  ));
+  games.add(new Game(gameId(game), maxes(game)));
 }
 
 // find the game id (don't trust them to be a sequence!)
