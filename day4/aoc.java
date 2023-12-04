@@ -7,7 +7,7 @@ import java.util.stream.*;
 record Card(int id, TreeSet<Integer> wins, TreeSet<Integer> nums) {
   long points() {
     var matches = matches();
-    return matches == 0L ? 0 : (long)Math.pow(2, matches -1);
+    return matches == 0L ? 0L : (long)Math.pow(2, matches-1);
   }
   long matches() {
     return wins.stream().filter(w -> nums.contains(w)).count();
@@ -22,9 +22,9 @@ Map<Integer, Card> cards = new HashMap<>();
 TreeMap<Integer, Long> cardCounts = new TreeMap<>();
 
 // turn a space separated list of numbers into a sorted list of ints
-TreeSet<Integer> toNums(String n) {
+TreeSet<Integer> toNums(String numStr) {
   return new TreeSet<>(
-    Arrays.stream(n.split(" +"))
+    Arrays.stream(numStr.trim().split(" +"))
     .map(Integer::parseInt)
     .collect(Collectors.toSet())
   );
@@ -36,7 +36,7 @@ void parseCard(String l) {
   var m = cardPat.matcher(l);
   if (m.find()) {
     var id = Integer.valueOf(m.group(1));
-    cards.put(id, new Card(id, toNums(m.group(2).trim()), toNums(m.group(3).trim())));
+    cards.put(id, new Card(id, toNums(m.group(2)), toNums(m.group(3))));
     cardCounts.put(id, 1L);
   }
 }
