@@ -14,8 +14,14 @@ record Card(int id, TreeSet<Integer> wins, TreeSet<Integer> nums) {
   }
 }
 
-ArrayList<Card> cards = new ArrayList<>();
+// every card, as a map id->Card for easy access in part 2
+Map<Integer, Card> cards = new HashMap<>();
 
+// part 2 needs us to count how many copies of each card we have
+// so keep a sorted list of card ids and their respective counts
+TreeMap<Integer, Long> cardCounts = new TreeMap<>();
+
+// turn a space separated list of numbers into a sorted list of ints
 TreeSet<Integer> toNums(String n) {
   return new TreeSet<>(
     Arrays.stream(n.split(" +"))
@@ -24,24 +30,40 @@ TreeSet<Integer> toNums(String n) {
   );
 }
 
+// turn an input line into a Card and set its copies to 1
 Pattern cardPat = Pattern.compile("^Card +(\\d+)\\: ([\\d ]+)\\|([\\d ]+)$");
 void parseCard(String l) {
   var m = cardPat.matcher(l);
   if (m.find()) {
-    cards.add(new Card(Integer.valueOf(m.group(1)), toNums(m.group(2).trim()), toNums(m.group(3).trim())));
+    var id = Integer.valueOf(m.group(1));
+    cards.put(id, new Card(id, toNums(m.group(2).trim()), toNums(m.group(3).trim())));
+    cardCounts.put(id, 1L);
   }
 }
 
+// do the bonkers card copying for part 2
+void copyCards() {
+  for (var id : cardCounts.keySet()) {
+    var matchCount = cards.get(id).matches();
+    var cardCount = cardCounts.get(id);
+    for (var i = 1; i <= matchCount; i++) {
+      var nextCardCount = cardCounts.get(id+i);
+      if (nextCardCount == null) continue;
+      cardCounts.put(id+i, nextCardCount+cardCount);
+    }
+  }
+}
 
 long part1() {
-  return cards.stream().mapToLong(c -> c.points()).sum();
+  return cards.values().stream().mapToLong(c -> c.points()).sum();
 }
 
 long part2() {
-  return 0;
+  copyCards();
+  return cardCounts.values().stream().mapToLong(i -> i).sum();
 }
 
-// load text file into `cards`
+// load text file and parse into useful structures
 void slurp(String filename) throws Exception {
   Files.lines(Path.of(filename)).forEach(l -> { parseCard(l); });
 }
