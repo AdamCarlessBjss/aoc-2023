@@ -1,4 +1,4 @@
-// https://adventofcode.com/2022/day/1
+// https://adventofcode.com/2023/day/1
 import java.nio.file.*;
 import java.util.*;
 

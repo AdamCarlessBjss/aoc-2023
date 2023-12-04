@@ -1,4 +1,4 @@
-// https://adventofcode.com/2022/day/2
+// https://adventofcode.com/2023/day/2
 import java.nio.file.*;
 import java.util.*;
 import java.util.regex.*;
