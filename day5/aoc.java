@@ -11,7 +11,7 @@ record AlmanacEntry(long destStart, long srcStart, long range) {
 ArrayList<String> lines = new ArrayList<>();
 
 // all the almanac section mappings
-List<Long> seeds = new ArrayList<>();
+long[] seeds;
 ArrayList<AlmanacEntry> seed2soil = new ArrayList<>();
 ArrayList<AlmanacEntry> soil2fert = new ArrayList<>();
 ArrayList<AlmanacEntry> fert2water = new ArrayList<>();
@@ -33,25 +33,25 @@ void slurp(String filename) throws Exception {
 }
 
 long part1() {
-  return streamToMinLocation(seeds.stream());
+  return streamToMinLocation(LongStream.of(seeds));
 }
 
 // Construct a bunch of different streams from the seeds list and run part1 for each.
 long part2() {
   long min = Long.MAX_VALUE;
-  for (int i=0; i<seeds.size()-1; i+=2) {
+  for (int i=0; i<seeds.length-1; i+=2) {
     min = Math.min(min, streamToMinLocation(seedRange(i)));
   }
   return min;
 }
 
-long streamToMinLocation(Stream<Long> seedStream) {
-  return seedStream.parallel().mapToLong(s -> chainMapsForSeed(s)).min().orElse(0L);
+long streamToMinLocation(LongStream seedStream) {
+  return seedStream.parallel().map(s -> chainMapsForSeed(s)).min().orElse(0L);
 }
 
 // part 2 - treat a pair of seed entries as the generator for a stream of seed ids
-Stream<Long> seedRange(int seedIndex) {
-  return LongStream.range(seeds.get(seedIndex), seeds.get(seedIndex)+seeds.get(seedIndex+1)).boxed();
+LongStream seedRange(int seedIndex) {
+  return LongStream.range(seeds[seedIndex], seeds[seedIndex]+seeds[seedIndex+1]);
 }
 
 // do the mapping logic thru all the almanac sections
@@ -97,12 +97,11 @@ int parseMap(int i, ArrayList<AlmanacEntry> map) {
 }
 
 // parse the seeds line
-List<Long> parseSeeds(String s) { 
+long[] parseSeeds(String s) { 
   return Arrays.stream(s.split(" "))
     .skip(1)
     .mapToLong(Long::parseLong)
-    .boxed()
-    .toList();
+    .toArray();
 }
 
 // parse a single almanac map line
